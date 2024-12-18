@@ -4,15 +4,17 @@ import os
 import altair as alt
 
 # 设置文件路径
-directory = r'C:\Data\data'
+directory = r'C:\Users\Administrator\Documents\MnewData'
 file = 'gdf_RAC.csv'
 file2 = 'df_KPI.csv'
 
 # 缓存读取 CSV 文件的函数
 @st.cache_data
 def load_data():
-    df = pd.read_csv(os.path.join(directory, file), encoding='utf-8')
-    df_KPI = pd.read_csv(os.path.join(directory, file2), encoding='utf-8')
+    df = pd.read_csv(os.path.join(directory, file), encoding='utf-8', usecols=['ID', '工作频段', '地市', '县区', '基站名称'])
+    df_KPI = pd.read_csv(os.path.join(directory, file2), encoding='utf-8', usecols=[
+        'ID', '开始时间', 'R1012_001', 'R1012_002', 'K1009_001', 'K1009_002'
+    ])
     return df, df_KPI
 
 # 读取数据
@@ -87,17 +89,7 @@ col3.metric('5G网络2.6G基站数', BS_num_2, 0.25)
 # 计算新列
 def calculate_columns(df):
     df["数据业务流量"] = df["R1012_001"] + df["R1012_002"]
-    df["上行用户平均速率"] = (df["R1501_001"] - df["R1501_005"] / 100) * 8 / df["R1501_003"]
-    df["下行用户平均速率"] = (df["R1501_002"] - df["R1501_006"] / 100) * 8 / df["R1501_004"]
     df["VoNR语音话务量"] = df["K1009_001"] / 4
-    df["ViNR视频话务量"] = df["K1009_002"] / 4
-    df["无线接通率"] = (df["R1001_012"] / df["R1001_001"]) * (df["R1034_012"] / df["R1034_001"]) * (df["R1039_002"] / df["R1039_001"]) * 100
-    df["无线掉线率"] = 100 * (df["R1004_003"] - df["R1004_004"]) / (df["R1004_002"] + df["R1004_007"] + df["R1005_012"] + df["R1006_012"])
-    df["系统内切换成功率"] = 100 * ((df["R2007_002"] + df["R2007_004"] + df["R2006_004"] + df["R2006_008"] + df["R2005_004"] + df["R2005_008"]) / (df["R2007_001"] + df["R2007_003"] + df["R2006_001"] + df["R2006_005"] + df["R2005_001"] + df["R2005_005"]))
-    df["VoNR无线接通率"] = 100 * (df["R1034_013"] / df["R1034_002"]) * (df["R1001_018"] + df["R1001_015"]) / (df["R1001_007"] + df["R1001_004"])
-    df["VoNR语音掉线率"] = 100 * ((df["R2035_003"] - df["R2035_013"]) / (df["R2035_003"] + df["R2035_026"]))
-    df["VoNR系统内切换成功率"] = 100 * (df["R2005_063"] + df["R2005_067"] + df["R2006_071"] + df["R2006_075"] + df["R2007_036"] + df["R2007_040"]) / (df["R2005_060"] + df["R2005_064"] + df["R2006_068"] + df["R2006_072"] + df["R2007_033"] + df["R2007_037"])
-    df["EPSFallback回落成功率"] = 100 * (df["R2075_001"] + df["R2040_014"]) / df["R2034_033"]
     return df
 
 merged_df = calculate_columns(merged_df)
