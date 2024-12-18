@@ -4,7 +4,7 @@ import os
 import altair as alt
 
 # 设置文件路径
-directory = r'C:\Users\Administrator\PYMo\Data'
+directory = r'C:\Data\data'
 file = 'gdf_RAC.csv'
 file2 = 'df_KPI.csv'
 
